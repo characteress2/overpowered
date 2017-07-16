@@ -8,3 +8,4 @@ obj-y += sde/
 obj-y += broadcast/
 obj-$(CONFIG_DVB_MPQ) += dvb/
 obj-$(CONFIG_MSM_AIS) += ais/
+obj-$(CONFIG_ZUK_CAMERA) += camera_v2z/
