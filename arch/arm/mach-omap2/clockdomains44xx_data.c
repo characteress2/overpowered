@@ -205,7 +205,7 @@ static struct clockdomain ivahd_44xx_clkdm = {
 	.dep_bit	  = OMAP4430_IVAHD_STATDEP_SHIFT,
 	.wkdep_srcs	  = ivahd_wkup_sleep_deps,
 	.sleepdep_srcs	  = ivahd_wkup_sleep_deps,
-	.flags		  = CLKDM_CAN_HWSUP_SWSUP,
+	.flags		  = CLKDM_CAN_SWSUP,
 };
 
 static struct clockdomain l4_secure_44xx_clkdm = {
