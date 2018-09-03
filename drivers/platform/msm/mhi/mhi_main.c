@@ -471,11 +471,11 @@ error_tre_ring:
 }
 EXPORT_SYMBOL(mhi_open_channel);
 
-bool mhi_is_device_ready(const struct device const *dev,
+bool mhi_is_device_ready(const struct device *dev,
 			 const char *node_name)
 {
 	struct mhi_device_ctxt *itr;
-	const struct device_node const *of_node;
+	const struct device_node *of_node;
 	bool match_found = false;
 
 	if (!mhi_device_drv)
@@ -505,7 +505,7 @@ int mhi_register_channel(struct mhi_client_handle **client_handle,
 			 struct mhi_client_info_t *client_info)
 {
 	struct mhi_device_ctxt *mhi_dev_ctxt = NULL, *itr;
-	const struct device_node const *of_node;
+	const struct device_node *of_node;
 	struct mhi_client_config *client_config;
 	const char *node_name;
 	enum MHI_CLIENT_CHANNEL chan;
@@ -1899,6 +1899,7 @@ int mhi_register_device(struct mhi_device *mhi_device,
 	if (mhi_device->support_rddm) {
 		mhi_dev_ctxt->bhi_ctxt.support_rddm = true;
 		mhi_dev_ctxt->bhi_ctxt.rddm_size = mhi_device->rddm_size;
+		mhi_dev_ctxt->bhi_ctxt.rddm_table.sequence = 1;
 
 		mhi_log(mhi_dev_ctxt, MHI_MSG_INFO,
 			"Device support rddm of size:0x%lx bytes\n",
