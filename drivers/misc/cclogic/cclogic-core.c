@@ -632,7 +632,7 @@ static ssize_t cclogic_reg_show(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
 	struct cclogic_dev *cclogic_dev = dev_get_drvdata(dev);
-	int size;
+	int size = 0;
 	int reg, value;
 
 	if(cclogic_dev->ops && cclogic_dev->ops->read){
@@ -683,57 +683,6 @@ static ssize_t cclogic_reg_show(struct device *dev,
 
 static DEVICE_ATTR(reg, S_IRUGO | S_IWUSR, cclogic_reg_show, cclogic_reg_store);
 
-/*
- *
- */
-#ifdef CONFIG_PRODUCT_Z2_X
-/*
-*	z2-x: GPIO121---typec_usb3_sw_pd---function_switch_gpio10
-*              GPIO82--- usb_uart_en---function_switch_gpio1
-*     gpio121 Low: enable usb30, High: disable usb30
-*     gpio82   Low: connect,        High: disconnect
-*     For otg: gpio82 : high---sleep 300ms---low
-*/
-static void cclogic_func_set(struct cclogic_platform *p,enum cclogic_func_type func)
-{
-	switch(func){
-	case CCLOGIC_FUNC_HIZ:
-		if (gpio_is_valid(p->function_switch_gpio1)){
-			gpio_set_value_cansleep(p->function_switch_gpio1,1);
-		}
-		if (gpio_is_valid(p->function_switch_gpio10)){
-			gpio_set_value_cansleep(p->function_switch_gpio10,0);
-		}
-		break;
-	case CCLOGIC_FUNC_AUDIO:
-	case CCLOGIC_FUNC_USB:
-		if (gpio_is_valid(p->function_switch_gpio1)){
-			gpio_set_value_cansleep(p->function_switch_gpio1,0);
-		}
-		if (gpio_is_valid(p->function_switch_gpio10)){
-			gpio_set_value_cansleep(p->function_switch_gpio10,0);
-		}
-		break;
-	case CCLOGIC_FUNC_OTG:
-		if (gpio_is_valid(p->function_switch_gpio1)){
-			gpio_set_value_cansleep(p->function_switch_gpio1,0);
-		}
-		if (gpio_is_valid(p->function_switch_gpio10)){//if otg, disable usb3.0
-			gpio_set_value_cansleep(p->function_switch_gpio10,0);
-		}
-
-		break;
-	case CCLOGIC_FUNC_UART:
-		if (gpio_is_valid(p->function_switch_gpio1)){
-			gpio_set_value_cansleep(p->function_switch_gpio1,0);
-		}
-		if (gpio_is_valid(p->function_switch_gpio10)){
-			gpio_set_value_cansleep(p->function_switch_gpio10,0);
-		}
-		break;
-	}
-}
-#else
 static void cclogic_func_set(struct cclogic_platform *p,enum cclogic_func_type func)
 {
 	switch(func){
