@@ -683,6 +683,7 @@ static ssize_t cclogic_reg_show(struct device *dev,
 
 static DEVICE_ATTR(reg, S_IRUGO | S_IWUSR, cclogic_reg_show, cclogic_reg_store);
 
+
 static void cclogic_func_set(struct cclogic_platform *p,enum cclogic_func_type func)
 {
 	switch(func){
@@ -728,7 +729,6 @@ static void cclogic_func_set(struct cclogic_platform *p,enum cclogic_func_type f
 		break;
 	}
 }
-#endif
 /*
  *
  */
@@ -917,11 +917,7 @@ static int cclogic_do_real_work(struct cclogic_state *state,
 		cclogic_func_set(p,CCLOGIC_FUNC_HIZ);
 		cclogic_vbus_power_on(pdata,true);
 		mdelay(300);
-#ifdef CONFIG_PRODUCT_Z2_X
-		cclogic_func_set(p,CCLOGIC_FUNC_OTG);
-#else
 		cclogic_func_set(p,CCLOGIC_FUNC_USB);
-#endif
 		break;
 	case CCLOGIC_USB_HOST:
 		pr_debug("%s-->function switch set to usb device\n",__func__);
@@ -1096,11 +1092,7 @@ static int cclogic_init_gpio(struct cclogic_dev *cclogic_dev)
 					__func__,pdata->function_switch_gpio10);
 			goto err_gpio1_dir;
 		}
-#ifdef CONFIG_PRODUCT_Z2_X
 		ret = gpio_direction_output(pdata->function_switch_gpio10,0);
-#else
-		ret = gpio_direction_output(pdata->function_switch_gpio10,0);
-#endif
 		if (ret) {
 			dev_err(&client->dev,
 				"%s-->unable to set direction for gpio [%d]\n",
@@ -1126,12 +1118,10 @@ static int cclogic_init_gpio(struct cclogic_dev *cclogic_dev)
 			goto err_gpio2_dir;
 		}
 	} else {
-#ifndef CONFIG_PRODUCT_Z2_X //z2-x don't use function_switch_gpio2
 		ret = -ENODEV;
 		dev_err(&client->dev,
 			 "%s-->function_switch_gpio2 not provided\n",__func__);
 		goto err_gpio10_dir;
-#endif
 	}
 
 	if (gpio_is_valid(pdata->usb_ss_gpio)) {
