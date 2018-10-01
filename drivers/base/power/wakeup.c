@@ -421,34 +421,6 @@ static void wakeup_source_activate(struct wakeup_source *ws)
 {
 	unsigned int cec;
 
-	if (((!enable_wlan_rx_wake_ws &&
-			!strncmp(ws->name, "wlan_rx_wake", 12)) ||
-		(!enable_si_ws &&
-			!strncmp(ws->name, "sensor_ind", 10)) ||
-		(!enable_msm_hsic_ws &&
-			!strncmp(ws->name, "msm_hsic_host", 13)) ||
-		(!enable_wlan_ctrl_wake_ws &&
-			!strncmp(ws->name, "wlan_ctrl_wake", 14)) ||
-		(!enable_wlan_wake_ws &&
-			!strncmp(ws->name, "wlan_wake", 9)) ||
-		(!enable_bluedroid_timer_ws &&
-			!strncmp(ws->name, "bluedroid_timer", 15)) ||
-		(!enable_ipa_ws &&
-			!strncmp(ws->name, "IPA_WS", 6)))) {
-		/*
-		 * let's try and deactivate this wakeup source since the user
-		 * clearly doesn't want it. The user is responsible for any
-		 * adverse effects and has been warned about it
-		 */
-		if (ws->active)
-			wakeup_source_deactivate(ws);
-
-		return;
-	}
-
-	if (WARN(wakeup_source_not_registered(ws),
-			"unregistered wakeup source\n"))
-		return;
 	/*
 	 * active wakeup source should bring the system
 	 * out of PM_SUSPEND_FREEZE state
@@ -685,10 +657,6 @@ void __pm_wakeup_event(struct wakeup_source *ws, unsigned int msec)
 	spin_lock_irqsave(&ws->lock, flags);
 
 	wakeup_source_report_event(ws);
-
-	// Regulate Wake Time. Cut to 55% of Time Requested if Limits Exceeded.
-	if (ktime_to_ms(ws->total_time) > 900000 || (ws->wakeup_count > 8 && ktime_to_ms(ws->max_time) > 60000))
-		msec = ((msec * 55) / 100);
 
 	if (!msec) {
 		wakeup_source_deactivate(ws);
